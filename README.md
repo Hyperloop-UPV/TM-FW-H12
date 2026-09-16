@@ -17,4 +17,4 @@ Then make a branch and work with it:
 
 When you push the first time it'll say there is no remote branch with the name and it will show a message with a command suggestion that contains `--set-upstream`, run that on the first push (all your next pushes can be done with `git push`).
 
-The author of this year's training month for firmware is @victor-Lopez25
+The author of this year's training month for firmware is [victor-Lopez25](github.com/victor-Lopez25)
