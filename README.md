@@ -8,6 +8,7 @@ To upload the task, first clone the repo:
 2. run `git clone <url>`
 
 Then make a branch and work with it:
+
 3. run `git branch <branch name>`
 4. run `git switch <branch name>`
 
