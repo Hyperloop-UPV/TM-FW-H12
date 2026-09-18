@@ -1,3 +1,4 @@
+#include <cstdlib>
 #if _WIN32
 #include <windows.h>
 #else
@@ -6,6 +7,10 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
+
+#define INIT_ARRAY_SIZE 8
+#define GROW_FACTOR 2
 
 void Sleep_ms(uint32_t ms)
 {
@@ -31,7 +36,35 @@ struct MappingEngine {
     MapObj *items;
     size_t count;
     size_t capacity;
+
 };
+
+void DynamicArrayAppend(MappingEngine *engine, MapObj obj) {
+    // ver si está vacío
+    if (engine->items == NULL) {
+        MapObj *new_items = (MapObj *)calloc(INIT_ARRAY_SIZE, sizeof(MapObj));
+        if (!new_items) {
+            //qué hacemos aquí?
+            return;
+        }
+        engine->items = new_items;
+        engine->capacity = INIT_ARRAY_SIZE;
+        engine->count = 0;
+    }
+    // hacer más grande
+    if (engine->capacity == 0) {
+        MapObj *new_items = (MapObj *)realloc(engine->items, sizeof(MapObj)*engine->count*GROW_FACTOR);
+        if (!new_items) {
+            //qué hacemos aquí?
+            return;
+        }
+        engine->capacity = GROW_FACTOR*engine->count - engine->capacity;
+    }
+    // meterlo
+    engine->items[engine->count] = obj;
+    engine->capacity--;
+    engine->count++;
+}
 
 // puede ser cambiado para optimizar
 void UpdateMapping(MappingEngine *engine)
@@ -61,7 +94,7 @@ void AddMapping_Impl(MappingEngine *engine, void *data, size_t len, uint32_t ite
         .fun = fun,
     };
     // this is vector append
-    //DynamicArray_Append(engine, prot);
+    DynamicArrayAppend(engine, prot);
 }
 
 // ejemplo de map function
@@ -73,7 +106,7 @@ void rangeMapping(void *item, void *values)
 
     float val = *(float*)item;
     bool inrange = val > min && val < max;
-    printf("value %s", inrange ? "in range" : "out of range");
+    printf("value %s", inrange ? "in range\n" : "out of range\n");
 }
 
 int main()
@@ -81,14 +114,15 @@ int main()
     MappingEngine engine_data = {0};
     MappingEngine *engine = &engine_data;
 
-    float toBeMappedArray[12] = {0};
+    float toBeMappedArray[3] = {3.f, -1.f, 10.f};
     float valueRange[2] = {2.7f, 4.2f};
-    AddMapping(engine, toBeMappedArray, rangeMapping, &valueRange);
 
-    for(;;) {
-        UpdateMapping(engine);
-        Sleep_ms(100);
+    for(int i = 0; i < 10; i++) {
+        printf("%d\n", i);
+        AddMapping(engine, toBeMappedArray, rangeMapping, &valueRange);
+        Sleep_ms(10);
     }
 
+    UpdateMapping(engine);
     return 0;
 }
