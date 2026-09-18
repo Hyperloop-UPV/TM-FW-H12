@@ -11,6 +11,7 @@ Idea:
 #include <unistd.h>
 #endif
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 
