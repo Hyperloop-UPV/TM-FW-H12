@@ -39,13 +39,13 @@ struct MappingEngine {
 
 };
 
-void DynamicArrayAppend(MappingEngine *engine, MapObj obj) {
+// he cambiado el tipo para poder informar del error
+int DynamicArrayAppend(MappingEngine *engine, MapObj obj) {
     // ver si está vacío
     if (engine->items == NULL) {
         MapObj *new_items = (MapObj *)calloc(INIT_ARRAY_SIZE, sizeof(MapObj));
         if (!new_items) {
-            //qué hacemos aquí?
-            return;
+            return 1;
         }
         engine->items = new_items;
         engine->capacity = INIT_ARRAY_SIZE;
@@ -55,8 +55,7 @@ void DynamicArrayAppend(MappingEngine *engine, MapObj obj) {
     if (engine->capacity == 0) {
         MapObj *new_items = (MapObj *)realloc(engine->items, sizeof(MapObj)*engine->count*GROW_FACTOR);
         if (!new_items) {
-            //qué hacemos aquí?
-            return;
+            return 1;
         }
         engine->capacity = GROW_FACTOR*engine->count - engine->capacity;
     }
@@ -64,6 +63,7 @@ void DynamicArrayAppend(MappingEngine *engine, MapObj obj) {
     engine->items[engine->count] = obj;
     engine->capacity--;
     engine->count++;
+    return 0;
 }
 
 // puede ser cambiado para optimizar
@@ -94,7 +94,10 @@ void AddMapping_Impl(MappingEngine *engine, void *data, size_t len, uint32_t ite
         .fun = fun,
     };
     // this is vector append
-    DynamicArrayAppend(engine, prot);
+    int err = DynamicArrayAppend(engine, prot);
+    if (err) {
+        printf("Error while appending\n");
+    }
 }
 
 // ejemplo de map function
