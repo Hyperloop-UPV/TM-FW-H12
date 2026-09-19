@@ -14,7 +14,7 @@
         ((const char*[]){__VA_ARGS__}), \
         (sizeof((const char*[]){__VA_ARGS__})/sizeof(const char*)))
 ```
-3. `_Generic` y como no es realmente generics, si no function overloading (exclusivo de C)
+3. `_Generic` y como no es realmente generics, sino function overloading (exclusivo de C)
 4. Metaprogramación 2; Templates, constexpr, consteval
 4.1. Menciones sin necesidad de mostrar: loop en tiempo de compilación (no es loop unrolling)
 5. Uso del compilador, flags usuales, flags importantes (como debug info o warnings)
